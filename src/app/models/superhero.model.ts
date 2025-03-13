@@ -1,7 +1,7 @@
-export type ColumnKeys<G> = Array<keyof G>;
-
 export interface Superhero {
     id: number;
     name: string;
-    actions: string
-}
+    actions: string;
+  }
+  
+  export type ColumnKeys<T> = (keyof T)[];

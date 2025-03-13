@@ -8,43 +8,42 @@ import { Observable, tap } from 'rxjs';
 })
 export class SuperheroService {
 
-  private apiUrl = 'http://localhost:3000/superhero';
+  private apiUrl= 'http://localhost:3000/superhero'
   private superheroSignal = signal<Superhero[]>([]);
-
   constructor(private http: HttpClient) { }
 
   getAllSuperhero(): Observable<Superhero[]> {
-    return this.http.get<Superhero[]>(this.apiUrl).pipe(
-      tap(superheros => this.superheroSignal.set(superheros)) 
-    );
+   return this.http.get<Superhero[]>(this.apiUrl).pipe(
+    tap(superheros => this.superheroSignal.set(superheros)
+   )
+    )
   }
 
   get superheros() {
-    return this.superheroSignal;
+    return this.superheroSignal
   }
 
-
-  addSuperhero(superhero: Superhero) { 
-    this.http.post<Superhero>(this.apiUrl, superhero).subscribe(newHero => {
-      this.superheroSignal.update(heroes => [...heroes, newHero]);
-    });
+  addSuperhero(Superhero: Superhero){ 
+    this.http.post(this.apiUrl,Superhero).subscribe(
+      ()=> this.getAllSuperhero()
+    )
+  }
+  
+  updateSuperhero(id: string, updateSuperhero:Superhero){
+    this.http.put(`${this.apiUrl}/${id}`, updateSuperhero)
+    .subscribe(() => this.getAllSuperhero());
   }
 
-  updateSuperhero(id: number, updatedSuperhero: Superhero) {
-    this.http.put<Superhero>(`${this.apiUrl}/${id}`, updatedSuperhero).subscribe(() => {
-      this.superheroSignal.update(heroes => 
-        heroes.map(hero => hero.id === id ? updatedSuperhero : hero)
-      );
-    });
-  }
-
-  getSuperheroById(id: number): Superhero | undefined {
+  getSuperheroById(id:number) {
     return this.superheroSignal().find(superhero => superhero.id === id);
   }
 
   deleteSuperhero(id: number) {
-    this.http.delete(`${this.apiUrl}/${id}`).subscribe(() => {
-      this.superheroSignal.update(heroes => heroes.filter(hero => hero.id !== id));
-    });
+    this.http.delete(`${this.apiUrl}/${id}`).subscribe(
+      ()=> this.getAllSuperhero()
+    );
   }
+
+
+
 }

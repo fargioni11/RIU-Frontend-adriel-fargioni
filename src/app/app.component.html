@@ -2,8 +2,14 @@
 <section>
 <mat-card>
   <mat-card-content>
-    <app-toolbar (addSuperheroEvent)="addSuperhero()"/>
-    <router-outlet />
+    @defer {
+      <app-toolbar (addSuperheroEvent)="addSuperhero()"/>
+      <router-outlet />
+    }@loading(minimum 1s) {
+      <div class="spinner">
+        <mat-spinner mode="indeterminate"></mat-spinner>
+      </div>
+    }
   </mat-card-content>
 </mat-card>
 </section>

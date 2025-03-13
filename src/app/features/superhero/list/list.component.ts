@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { GridComponent } from '../../../components/grid/grid.component';
 import { ColumnKeys, Superhero } from '../../../models/superhero.model';
 import { SuperheroService } from '../../../services/superhero.service';
@@ -11,28 +11,27 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   imports: [GridComponent],
   template: `
     <section>
-      <app-grid [displayedColumns]="displayedColumns" [data]="data"/>
+      <app-grid [displayedColumns]="displayedColumns" [data]="superheroes()"/>
     </section>
   `,
 })
 export class ListComponent implements OnInit {
+  superheroes = signal<Superhero[]>([]);
   private readonly _superheroService = inject(SuperheroService);
   private readonly _destroyRef = inject(DestroyRef);
   displayedColumns: ColumnKeys<Superhero> = ['id', 'name', 'actions'];
-  data: Superhero[] = [];
+
 
   ngOnInit(): void {
     this.getAllSuperhero();
   }
 
-  getAllSuperhero() {
+  // 
+  getAllSuperhero(){
     this._superheroService.getAllSuperhero()
-      .pipe(
-        tap((superheroes: Superhero[]) => {
-          takeUntilDestroyed(this._destroyRef);
-          this.data = superheroes.map(superhero => ({ ...superhero, actions: '' }));
-        })
-      )
-      .subscribe();
+    .pipe(
+      takeUntilDestroyed(this._destroyRef),
+      tap((superheros:Superhero[])=> this.superheroes.set(superheros)))
+      .subscribe()
   }
 }

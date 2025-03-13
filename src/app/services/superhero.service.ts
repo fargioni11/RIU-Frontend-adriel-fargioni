@@ -1,45 +1,50 @@
 import { Injectable, signal } from '@angular/core';
 import { Superhero } from '../models/superhero.model';
 import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SuperheroService {
 
-  private apiUrl= 'http://localhost:3000/superhero'
+  private apiUrl = 'http://localhost:3000/superhero';
   private superheroSignal = signal<Superhero[]>([]);
+
   constructor(private http: HttpClient) { }
 
-  getSuperhero() {
-    this.http.get<Superhero[]>(this.apiUrl).subscribe(
-      superheros => this.superheroSignal.set(superheros)
-    )
-  }
-
-  get superheros() {
-    return this.superheroSignal
-  }
-
-  addSuperhero(Superhero: Superhero){ 
-    this.http.post(this.apiUrl,Superhero).subscribe(
-      ()=> this.getSuperhero()
-    )
-  }
-
-  deleteSuperhero(id: number) {
-    this.http.delete(`${this.apiUrl}/${id}`).subscribe(
-      ()=> this.getSuperhero()
+  getAllSuperhero(): Observable<Superhero[]> {
+    return this.http.get<Superhero[]>(this.apiUrl).pipe(
+      tap(superheros => this.superheroSignal.set(superheros)) 
     );
   }
 
-  updateSuperhero(id: string, updateSuperhero:Superhero){
-    this.http.put(`${this.apiUrl}/${id}`, updateSuperhero)
-    .subscribe(() => this.getSuperhero());
+  get superheros() {
+    return this.superheroSignal;
   }
 
-  getSuperheroById(id:number) {
+
+  addSuperhero(superhero: Superhero) { 
+    this.http.post<Superhero>(this.apiUrl, superhero).subscribe(newHero => {
+      this.superheroSignal.update(heroes => [...heroes, newHero]);
+    });
+  }
+
+  updateSuperhero(id: number, updatedSuperhero: Superhero) {
+    this.http.put<Superhero>(`${this.apiUrl}/${id}`, updatedSuperhero).subscribe(() => {
+      this.superheroSignal.update(heroes => 
+        heroes.map(hero => hero.id === id ? updatedSuperhero : hero)
+      );
+    });
+  }
+
+  getSuperheroById(id: number): Superhero | undefined {
     return this.superheroSignal().find(superhero => superhero.id === id);
   }
 
+  deleteSuperhero(id: number) {
+    this.http.delete(`${this.apiUrl}/${id}`).subscribe(() => {
+      this.superheroSignal.update(heroes => heroes.filter(hero => hero.id !== id));
+    });
+  }
 }

@@ -47,7 +47,8 @@ Haz clic en Guardar y el nuevo superhéroe aparecerá en la tabla.
 2. Editar un superhéroe
 Haz clic en el botón ✏️ Editar en la tabla.
 Modifica los datos y presiona Guardar.
-Los cambios se reflejarán inmediatamente.3. Eliminar un superhéroe
+Los cambios se reflejarán inmediatamente.
+3. Eliminar un superhéroe
 Haz clic en el botón 🗑️ Eliminar en la tabla.
 Se mostrará un mensaje de confirmación.
 Si confirmas, el superhéroe será eliminado.

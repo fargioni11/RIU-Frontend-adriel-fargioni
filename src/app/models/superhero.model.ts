@@ -1,6 +1,8 @@
 export interface Superhero {
     id: number;
     name: string;
+    power: string
+    age :string
     actions: string;
   }
   

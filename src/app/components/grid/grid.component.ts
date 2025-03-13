@@ -10,27 +10,30 @@ import { ModalService } from '../modal/modal.service';
 import { ModalComponent } from '../modal/modal.component';
 import { SnackBarService } from '../../shared/services/snack-bar.service';
 import { Superhero } from '../../models/superhero.model';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 
 @Component({
   selector: 'app-grid',
   standalone: true,
-  imports: [MatTableModule, MatPaginatorModule, filterComponent, MatIconModule, MatButtonModule],
+  imports: [MatTableModule, MatPaginatorModule, filterComponent, MatIconModule, MatButtonModule, MatSortModule],
   templateUrl: './grid.component.html',
 })
 export class GridComponent<T> implements OnChanges, OnInit {
 
   private readonly superheroService = inject(SuperheroService);
   private readonly modalSvc = inject(ModalService);
-  valueToFilter = signal<string>('');
   private readonly _paginator = viewChild.required<MatPaginator>(MatPaginator);
   private readonly _snackBarSvc = inject(SnackBarService);
+  private readonly _sort = viewChild.required<MatSort>(MatSort)
   displayedColumns = input.required<string[]>();
   data = input.required<T[]>();
   dataSource = new MatTableDataSource<T>([]);
   superheroDeleted = output<void>();
   superheroAdded = output<void>();
   superheroEdited = output<void>();
-
+  sortableColumns = input<string[]>([]);
+  valueToFilter = signal<string>('');
+  
   constructor() {
     effect(() => {
       if (this.valueToFilter()) {
@@ -56,6 +59,7 @@ export class GridComponent<T> implements OnChanges, OnInit {
 
   ngOnInit(): void {
     this.dataSource.data = this.data();
+    this.dataSource.sort = this._sort();
   }
 
   deleteSuperhero(id: number) {

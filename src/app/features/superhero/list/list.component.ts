@@ -20,17 +20,19 @@ import { ModalComponent } from '../../../components/modal/modal.component';
         (superheroDeleted)="getAllSuperhero()"
         (superheroAdded)="onSuperheroAdded()"
         (superheroEdited)="getAllSuperhero()"
+        [sortableColumns]="sortables"
       />
     </section>
   `,
 })
 export class ListComponent implements OnInit {
-  superheroes = signal<Superhero[]>([]);
+  
   private readonly _superheroService = inject(SuperheroService);
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _modalService = inject(ModalService);
-  displayedColumns: ColumnKeys<Superhero> = ['id', 'name', 'actions'];
-
+  displayedColumns: ColumnKeys<Superhero> = ['id', 'name', 'power', 'age', 'actions'];
+  sortables:ColumnKeys<Superhero> = ['id', 'name', 'power', 'age', ];
+  superheroes = signal<Superhero[]>([]);
   ngOnInit(): void {
     this.getAllSuperhero();
   }

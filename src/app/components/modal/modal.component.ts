@@ -73,7 +73,9 @@ export class ModalComponent implements OnInit {
 
   private _buildForm(): void {
     this.superheroForm = this.fb.group({
-      name: ['', Validators.required],
+      name: ['', Validators.required, Validators.maxLength(15) ],
+      power: ['',Validators.required, Validators.maxLength(10)],
+      age: ['',Validators.required, Validators.maxLength(3) ,Validators.min(0), Validators.max(999)]
     });
   }
 }

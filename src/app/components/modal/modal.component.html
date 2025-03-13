@@ -8,7 +8,18 @@
             <input matInput type="text" formControlName="name">
           </mat-form-field>
     </div>
-   
+    <div class="row">
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Power</mat-label>
+            <input matInput type="text" formControlName="power">
+          </mat-form-field>
+    </div>
+    <div class="row">
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Age</mat-label>
+            <input matInput type="number" formControlName="age">
+          </mat-form-field>
+    </div>
     <div mat-dialog-actions>
         <button mat-raised-button [mat-dialog-close]="false" type="button">Cancel</button>
         <button [disabled]="!superheroForm.valid" mat-raised-button  type="submit">{{getTitle()}}</button>

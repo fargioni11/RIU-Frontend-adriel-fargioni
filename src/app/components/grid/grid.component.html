@@ -7,7 +7,7 @@
             <th mat-header-cell *matHeaderCellDef> {{column}} </th>
             <td mat-cell *matCellDef="let element"> {{element[column]}}
               @if(column === 'actions'){
-                <button mat-icon-button color="primary" (click)="editSuperhero(element.id)">
+                <button mat-icon-button color="primary" (click)="editSuperhero(element)">
                   <mat-icon>edit</mat-icon>
                 </button>
                 <button mat-icon-button color="warn" (click)="deleteSuperhero(element.id)">

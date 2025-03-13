@@ -1,15 +1,13 @@
-
 <section>
-<mat-card>
-  <mat-card-content>
-    @defer {
-      <app-toolbar (addSuperheroEvent)="addSuperhero()"/>
+  <mat-card>
+    <mat-card-content>
+      <!-- Spinner -->
+      @if (spinnerSRV.loadingState()) {
+        <div class="spinner">
+          <mat-spinner mode="indeterminate"></mat-spinner>
+        </div>
+      }
       <router-outlet />
-    }@loading(minimum 1s) {
-      <div class="spinner">
-        <mat-spinner mode="indeterminate"></mat-spinner>
-      </div>
-    }
-  </mat-card-content>
-</mat-card>
+    </mat-card-content>
+  </mat-card>
 </section>

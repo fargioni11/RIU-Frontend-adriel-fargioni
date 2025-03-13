@@ -1,13 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogContent, MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogModule } from '@angular/material/dialog';
 import { MatLabel, MatFormField } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { SuperheroService } from '../../services/superhero.service';
-import { ModalService } from './modal.service';
 import { APP_CONSTANTS } from '../../shared/constants';
 import { SnackBarService } from '../../shared/services/snack-bar.service';
+import { Superhero } from '../../models/superhero.model';
 
 @Component({
   selector: 'app-modal',
@@ -20,35 +20,55 @@ export class ModalComponent implements OnInit {
 
   superheroForm!: FormGroup;
   private readonly fb = inject(FormBuilder);
-  private readonly _matDialog = inject(MAT_DIALOG_DATA);
+  private readonly _matDialogData = inject(MAT_DIALOG_DATA);
+  private readonly _dialogRef = inject(MatDialogRef<ModalComponent>);
   private readonly _superheroSvc = inject(SuperheroService);
-  private readonly _modalSvc = inject(ModalService);
-  private readonly _snackBarSvc = inject(SnackBarService)
+  private readonly _snackBarSvc = inject(SnackBarService);
 
   ngOnInit(): void {
     this._buildForm();
-    this.superheroForm.patchValue(this._matDialog.data);
-  }
-
-  async onSubmit() {
-    let message = APP_CONSTANTS.MESSAGES.SUPERHERO_UPDATED;
-    const hero = this.superheroForm.value;
-    if (this._matDialog.data) {
-      this._superheroSvc.updateSuperhero(this._matDialog.data.id, this.superheroForm.value);
-    } else {
-      this._superheroSvc.addSuperhero(this.superheroForm.value);
-      message = APP_CONSTANTS.MESSAGES.SUPERHEROES_ADDED;
+    if (this._matDialogData?.data) {
+      this.superheroForm.patchValue(this._matDialogData.data);
     }
-    this._snackBarSvc.openSnackBar(message)
-    this._modalSvc.closeModal();
   }
 
+  onSubmit(): void {
+    if (this.superheroForm.invalid) {
+      return;
+    }
+  
+    const hero = this.superheroForm.value;
+    let message = APP_CONSTANTS.MESSAGES.SUPERHERO_UPDATED;
+  
+    if (this._matDialogData?.isEdit) {
+      const superheroId = this._matDialogData.data.id;
+      this._superheroSvc.updateSuperhero(superheroId.toString(), hero).subscribe({
+        next: () => {
+          this._snackBarSvc.openSnackBar(message);
+          this._dialogRef.close(true);
+        },
+        error: (err) => {
+          console.error('Error al actualizar el superhéroe:', err);
+          this._snackBarSvc.openSnackBar(APP_CONSTANTS.MESSAGES.CONFIMATION);
+        }
+      });
+    } else {
+      message = APP_CONSTANTS.MESSAGES.SUPERHEROES_ADDED;
+      this._superheroSvc.addSuperhero(hero).subscribe({
+        next: () => {
+          console.log('Superhéroe agregado correctamente');
+          this._snackBarSvc.openSnackBar(message);
+          this._dialogRef.close(true);
+        },
+        error: (err) => {
+          console.error('Error al agregar el superhéroe:', err);
+          this._snackBarSvc.openSnackBar(APP_CONSTANTS.MESSAGES.CONFIMATION);
+        }
+      });
+    }
+  }
   getTitle(): string {
-    return this._matDialog.data ? 'Edit Superhero' : 'Add Superhero';
-  }
-
-  private _disabledForm(): void {
-    this.superheroForm.disable();
+    return this._matDialogData?.isEdit ? 'Edit Superhero' : 'Add Superhero';
   }
 
   private _buildForm(): void {

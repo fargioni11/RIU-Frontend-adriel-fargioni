@@ -1,23 +1,19 @@
-import { ComponentType } from '@angular/cdk/portal';
-import { inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Superhero } from '../../models/superhero.model';
+import { Injectable } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-@Injectable({providedIn: 'root'})
+@Injectable({
+  providedIn: 'root',
+})
 export class ModalService {
+  constructor(private dialog: MatDialog) {}
 
-
-private readonly _dialog = inject(MatDialog);
-
-openModal<CT, T = Superhero>(ComponentRef:ComponentType<CT>, data?: T , isEditing = false): void {
-    const config = {data, isEditing};
-    this._dialog.open(ComponentRef, {
-        data: config,
-        width: '600px'
+  openModal<T, D = any>(component: any, data: D): MatDialogRef<T> {
+    return this.dialog.open(component, {
+      data,
     });
-}
+  }
 
-closeModal(): void {
-    this._dialog.closeAll();
-}
+  closeModal(): void {
+    this.dialog.closeAll();
+  }
 }

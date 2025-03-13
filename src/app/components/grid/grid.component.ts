@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, OnInit, signal, viewChild, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, effect, inject, input, OnInit, OnChanges, SimpleChanges, output, signal, viewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { filterComponent } from "./filter/filter.component";
@@ -9,6 +9,7 @@ import { APP_CONSTANTS } from '../../shared/constants';
 import { ModalService } from '../modal/modal.service';
 import { ModalComponent } from '../modal/modal.component';
 import { SnackBarService } from '../../shared/services/snack-bar.service';
+import { Superhero } from '../../models/superhero.model';
 
 @Component({
   selector: 'app-grid',
@@ -22,10 +23,13 @@ export class GridComponent<T> implements OnChanges, OnInit {
   private readonly modalSvc = inject(ModalService);
   valueToFilter = signal<string>('');
   private readonly _paginator = viewChild.required<MatPaginator>(MatPaginator);
-  private readonly _snackBarSvc = inject(SnackBarService)
+  private readonly _snackBarSvc = inject(SnackBarService);
   displayedColumns = input.required<string[]>();
   data = input.required<T[]>();
   dataSource = new MatTableDataSource<T>([]);
+  superheroDeleted = output<void>();
+  superheroAdded = output<void>();
+  superheroEdited = output<void>();
 
   constructor() {
     effect(() => {
@@ -34,14 +38,13 @@ export class GridComponent<T> implements OnChanges, OnInit {
       } else {
         this.dataSource.filter = '';
       }
-      if(this.data()){
+      if (this.data()) {
         this.dataSource.data = this.data();
       }
-    
-    },{allowSignalWrites: true});
+    }, { allowSignalWrites: true });
 
     effect(() => {
-        this.dataSource.paginator = this._paginator();
+      this.dataSource.paginator = this._paginator();
     });
   }
 
@@ -54,15 +57,26 @@ export class GridComponent<T> implements OnChanges, OnInit {
   ngOnInit(): void {
     this.dataSource.data = this.data();
   }
+
   deleteSuperhero(id: number) {
     const confirmDelete = confirm(APP_CONSTANTS.MESSAGES.CONFIMATION);
-    if(confirmDelete) {
-      this.superheroService.deleteSuperhero(id);
-      this._snackBarSvc.openSnackBar(APP_CONSTANTS.MESSAGES.SUPERHERO_DELETED)
+    if (confirmDelete) {
+      this.superheroService.deleteSuperhero(id).subscribe(() => {
+        this._snackBarSvc.openSnackBar(APP_CONSTANTS.MESSAGES.SUPERHERO_DELETED);
+        this.superheroDeleted.emit();
+      });
     }
   }
-
   editSuperhero(data: T) {
-    this.modalSvc.openModal<ModalComponent, T >(ModalComponent, data, true);
+    const modalRef = this.modalSvc.openModal<ModalComponent, { data: T; isEdit: boolean }>(
+      ModalComponent,
+      { data, isEdit: true }
+    );
+    modalRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this._snackBarSvc.openSnackBar(APP_CONSTANTS.MESSAGES.SUPERHERO_UPDATED);
+        this.superheroEdited.emit();
+      }
+    });
   }
 }

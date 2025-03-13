@@ -7,5 +7,6 @@ export const APP_CONSTANTS = {
         SUPERHERO_DELETED: 'Superhero deleted successfully',
         SUPERHERO_UPDATED: 'Superhero updated successfully',
         CONFIMATION: 'Are you sure you want to delete this Superhero?',
+        ERROR: "SuperHero Not Found"
     }
 }

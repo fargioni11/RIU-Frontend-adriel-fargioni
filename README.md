@@ -53,3 +53,10 @@ Los cambios se reflejarán inmediatamente.
 Haz clic en el botón 🗑️ Eliminar en la tabla.
 Se mostrará un mensaje de confirmación.
 Si confirmas, el superhéroe será eliminado.
+
+
+![image](https://github.com/user-attachments/assets/ac33be9b-55d7-4178-ae48-f9ef1fb3a55c)
+
+![image](https://github.com/user-attachments/assets/3da80337-ca93-45ba-9c73-3ceb44a47803)
+
+

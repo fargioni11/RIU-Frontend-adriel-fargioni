@@ -5,8 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogModule } from
 import { MatLabel, MatFormField } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { SuperheroService } from '../../services/superhero.service';
-import { APP_CONSTANTS } from '../../shared/constants';
-import { SnackBarService } from '../../shared/services/snack-bar.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-modal',
@@ -22,7 +21,6 @@ export class ModalComponent implements OnInit {
   private readonly _matDialogData = inject(MAT_DIALOG_DATA);
   private readonly _dialogRef = inject(MatDialogRef<ModalComponent>);
   private readonly _superheroSvc = inject(SuperheroService);
-  private readonly _snackBarSvc = inject(SnackBarService);
 
   ngOnInit(): void {
     this._buildForm();
@@ -37,35 +35,51 @@ export class ModalComponent implements OnInit {
     }
 
     const hero = this.superheroForm.value;
-    let message = APP_CONSTANTS.MESSAGES.SUPERHERO_UPDATED;
 
     if (this._matDialogData?.isEdit) {
       const superheroId = this._matDialogData.data.id;
       this._superheroSvc.updateSuperhero(superheroId.toString(), hero).subscribe({
         next: () => {
-          this._snackBarSvc.openSnackBar(message);
+          Swal.fire({
+            title: 'Actualizado',
+            text: 'El superhéroe ha sido actualizado con éxito',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
           this._dialogRef.close(true);
         },
         error: (err) => {
-          console.error('Error al actualizar el superhéroe:', err);
-          this._snackBarSvc.openSnackBar(APP_CONSTANTS.MESSAGES.CONFIMATION);
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo actualizar el superhéroe. Intenta nuevamente.',
+            icon: 'error'
+          });
         }
       });
     } else {
-      message = APP_CONSTANTS.MESSAGES.SUPERHEROES_ADDED;
       this._superheroSvc.addSuperhero(hero).subscribe({
         next: () => {
-          console.log('Superhéroe agregado correctamente');
-          this._snackBarSvc.openSnackBar(message);
+          Swal.fire({
+            title: 'Agregado',
+            text: 'El superhéroe ha sido agregado con éxito',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
           this._dialogRef.close(true);
         },
         error: (err) => {
-          console.error('Error al agregar el superhéroe:', err);
-          this._snackBarSvc.openSnackBar(APP_CONSTANTS.MESSAGES.CONFIMATION);
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo agregar el superhéroe. Intenta nuevamente.',
+            icon: 'error'
+          });
         }
       });
     }
   }
+
   getTitle(): string {
     return this._matDialogData?.isEdit ? 'Edit Superhero' : 'Add Superhero';
   }
@@ -73,8 +87,8 @@ export class ModalComponent implements OnInit {
   private _buildForm(): void {
     this.superheroForm = this.fb.group({
       name: ['', Validators.required],
-      power: ['',Validators.required],
-      age: ['',Validators.required,]
+      power: ['', Validators.required],
+      age: ['', Validators.required]
     });
   }
 }

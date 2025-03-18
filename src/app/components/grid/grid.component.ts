@@ -5,12 +5,10 @@ import { filterComponent } from "./filter/filter.component";
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { SuperheroService } from '../../services/superhero.service';
-import { APP_CONSTANTS } from '../../shared/constants';
 import { ModalService } from '../modal/modal.service';
 import { ModalComponent } from '../modal/modal.component';
-import { SnackBarService } from '../../shared/services/snack-bar.service';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-grid',
   standalone: true,
@@ -22,7 +20,7 @@ export class GridComponent<T> implements OnChanges, OnInit {
   private readonly superheroService = inject(SuperheroService);
   private readonly modalSvc = inject(ModalService);
   private readonly _paginator = viewChild.required<MatPaginator>(MatPaginator);
-  private readonly _snackBarSvc = inject(SnackBarService);
+
   private readonly _sort = viewChild.required<MatSort>(MatSort)
   displayedColumns = input.required<string[]>();
   data = input.required<T[]>();
@@ -62,24 +60,52 @@ export class GridComponent<T> implements OnChanges, OnInit {
   }
 
   deleteSuperhero(id: number) {
-    const confirmDelete = confirm(APP_CONSTANTS.MESSAGES.CONFIMATION);
-    if (confirmDelete) {
-      this.superheroService.deleteSuperhero(id).subscribe(() => {
-        this._snackBarSvc.openSnackBar(APP_CONSTANTS.MESSAGES.SUPERHERO_DELETED);
-        this.superheroDeleted.emit();
-      });
-    }
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result: { isConfirmed: any; }) => {
+      if (result.isConfirmed) {
+        this.superheroService.deleteSuperhero(id).subscribe(() => {
+          this.superheroDeleted.emit();
+
+          Swal.fire({
+            title: 'Eliminado',
+            text: 'El superhéroe ha sido eliminado con éxito',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+        });
+      }
+    });
   }
+
   editSuperhero(data: T) {
     const modalRef = this.modalSvc.openModal<ModalComponent, { data: T; isEdit: boolean }>(
       ModalComponent,
       { data, isEdit: true }
     );
+
     modalRef.afterClosed().subscribe((result) => {
       if (result) {
-        this._snackBarSvc.openSnackBar(APP_CONSTANTS.MESSAGES.SUPERHERO_UPDATED);
         this.superheroEdited.emit();
+
+        Swal.fire({
+          title: 'Actualizado',
+          text: 'El superhéroe ha sido actualizado con éxito',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        });
       }
     });
   }
+
+
 }

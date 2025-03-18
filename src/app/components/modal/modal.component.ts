@@ -6,11 +6,14 @@ import { MatLabel, MatFormField } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { SuperheroService } from '../../services/superhero.service';
 import Swal from 'sweetalert2';
+import { UppercaseDirective } from '../../directives/uppercase.directive';
+
+
 
 @Component({
   selector: 'app-modal',
   standalone: true,
-  imports: [MatLabel, MatFormField, MatDialogContent, MatInput, ReactiveFormsModule, MatDialogModule, MatButton],
+  imports: [MatLabel, MatFormField, MatDialogContent, MatInput, ReactiveFormsModule, MatDialogModule, MatButton, UppercaseDirective ],
   templateUrl: './modal.component.html',
   styleUrl: './modal.component.css'
 })

@@ -1,16 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { SuperheroService } from './superhero.service';
+import { ModalService } from './modal.service';
 
-describe('SuperheroService', () => {
-  let service: SuperheroService;
+describe('ModalService', () => {
+  let service: ModalService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [SuperheroService]
+      providers: [ModalService]
     });
-    service = TestBed.inject(SuperheroService);
+    service = TestBed.inject(ModalService);
   });
 
   it('should be created', () => {

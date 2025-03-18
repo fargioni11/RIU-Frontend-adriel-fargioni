@@ -5,10 +5,11 @@ import { filterComponent } from "./filter/filter.component";
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { SuperheroService } from '../../services/superhero.service';
-import { ModalService } from '../modal/modal.service';
+import { ModalService } from '../../services/modal.service';
 import { ModalComponent } from '../modal/modal.component';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-grid',
   standalone: true,
@@ -32,6 +33,7 @@ export class GridComponent<T> implements OnChanges, OnInit {
   valueToFilter = signal<string>('');
 
   constructor() {
+
     effect(() => {
       if (this.valueToFilter()) {
         this.dataSource.filter = this.valueToFilter();
@@ -59,28 +61,22 @@ export class GridComponent<T> implements OnChanges, OnInit {
     this.dataSource.sort = this._sort();
   }
 
-  deleteSuperhero(id: number) {
+  onFilterChange(value: string): void {
+    this.valueToFilter.set(value);
+  }
+
+  deleteSuperhero(id: number): void {
     Swal.fire({
       title: '¿Estás seguro?',
       text: 'Esta acción no se puede deshacer',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: 'Sí, eliminar!',
       cancelButtonText: 'Cancelar'
-    }).then((result: { isConfirmed: any; }) => {
+    }).then((result) => {
       if (result.isConfirmed) {
         this.superheroService.deleteSuperhero(id).subscribe(() => {
           this.superheroDeleted.emit();
-
-          Swal.fire({
-            title: 'Eliminado',
-            text: 'El superhéroe ha sido eliminado con éxito',
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false
-          });
         });
       }
     });

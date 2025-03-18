@@ -1,29 +1,35 @@
 <section style="margin-top: 1rem ;">
-    <app-filter [label]="'filter...'" [placeholder]="'ex : Superman'" [(filter)]="valueToFilter" />
-    <div class="mat-elevation-z8">
-      <table mat-table matSort [dataSource]="dataSource" >
-        @for (column of displayedColumns(); track $index){
-          <ng-container [matColumnDef]="column">
-            @if(this.sortableColumns().includes(column)){
-              <th mat-header-cell mat-sort-header *matHeaderCellDef > {{column}} </th>
-            } @else {
-              <th mat-header-cell *matHeaderCellDef > {{column}} </th>
+  <app-filter
+    [label]="'filter...'"
+    [placeholder]="'ex : Superman'"
+    [filter]="valueToFilter()"
+    (filterChange)="onFilterChange($event)"
+  />
+  <div class="mat-elevation-z8">
+    <table mat-table matSort [dataSource]="dataSource">
+      @for (column of displayedColumns(); track $index) {
+        <ng-container [matColumnDef]="column">
+          @if (sortableColumns().includes(column)) {
+            <th mat-header-cell mat-sort-header *matHeaderCellDef>{{ column }}</th>
+          } @else {
+            <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+          }
+          <td mat-cell *matCellDef="let element">
+            {{ element[column] }}
+            @if (column === 'actions') {
+              <button mat-icon-button color="primary" (click)="editSuperhero(element)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteSuperhero(element.id)">
+                <mat-icon>delete</mat-icon>
+              </button>
             }
-            <td mat-cell *matCellDef="let element"> {{element[column]}}
-              @if(column === 'actions'){
-                <button mat-icon-button color="primary" (click)="editSuperhero(element)">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button color="warn" (click)="deleteSuperhero(element.id)">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              }
-            </td>
-          </ng-container>
-        }
-        <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns();"></tr>
-      </table>
-      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-    </div>
-  </section>
+          </td>
+        </ng-container>
+      }
+      <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns();"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </div>
+</section>

@@ -4,7 +4,7 @@ import { ColumnKeys, Superhero } from '../../../models/superhero.model';
 import { SuperheroService } from '../../../services/superhero.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToolbarComponent } from '../../../components/toolbar/toolbar.component';
-import { ModalService } from '../../../components/modal/modal.service';
+import { ModalService } from '../../../services/modal.service';
 import { ModalComponent } from '../../../components/modal/modal.component';
 
 @Component({
@@ -26,7 +26,7 @@ import { ModalComponent } from '../../../components/modal/modal.component';
   `,
 })
 export class ListComponent implements OnInit {
-  
+
   private readonly _superheroService = inject(SuperheroService);
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _modalService = inject(ModalService);
@@ -59,7 +59,7 @@ export class ListComponent implements OnInit {
       if (result) {
               this.getAllSuperhero();
       } else {
-        
+
       }
     });
   }

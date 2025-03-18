@@ -9,7 +9,6 @@ import { APP_CONSTANTS } from '../../shared/constants';
 import { ModalService } from '../modal/modal.service';
 import { ModalComponent } from '../modal/modal.component';
 import { SnackBarService } from '../../shared/services/snack-bar.service';
-import { Superhero } from '../../models/superhero.model';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 
 @Component({
@@ -33,7 +32,7 @@ export class GridComponent<T> implements OnChanges, OnInit {
   superheroEdited = output<void>();
   sortableColumns = input<string[]>([]);
   valueToFilter = signal<string>('');
-  
+
   constructor() {
     effect(() => {
       if (this.valueToFilter()) {

@@ -7,7 +7,6 @@ import { MatInput } from '@angular/material/input';
 import { SuperheroService } from '../../services/superhero.service';
 import { APP_CONSTANTS } from '../../shared/constants';
 import { SnackBarService } from '../../shared/services/snack-bar.service';
-import { Superhero } from '../../models/superhero.model';
 
 @Component({
   selector: 'app-modal',
@@ -36,10 +35,10 @@ export class ModalComponent implements OnInit {
     if (this.superheroForm.invalid) {
       return;
     }
-  
+
     const hero = this.superheroForm.value;
     let message = APP_CONSTANTS.MESSAGES.SUPERHERO_UPDATED;
-  
+
     if (this._matDialogData?.isEdit) {
       const superheroId = this._matDialogData.data.id;
       this._superheroSvc.updateSuperhero(superheroId.toString(), hero).subscribe({

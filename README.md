@@ -60,3 +60,47 @@ Si confirmas, el superhéroe será eliminado.
 ![image](https://github.com/user-attachments/assets/3da80337-ca93-45ba-9c73-3ceb44a47803)
 
 
+## Ejecutando el Proyecto con Docker
+
+Este proyecto incluye una configuración Docker para simplificar el despliegue y la ejecución. Sigue los pasos a continuación para ejecutar el proyecto usando Docker:
+
+### Requisitos Previos
+
+Asegúrate de tener instalado lo siguiente:
+- [Docker](https://www.docker.com/) (versión 20.10 o superior)
+- [Docker Compose](https://docs.docker.com/compose/) (versión 2.0 o superior)
+
+### Pasos para Construir y Ejecutar
+
+1. Clona el repositorio y navega al directorio del proyecto:
+   ```bash
+   git clone https://github.com/fargioni11/RIU-Frontend-adriel-fargioni.git
+   cd RIU-Frontend-adriel-fargioni
+   ```
+
+2. Construye e inicia los servicios usando Docker Compose:
+   ```bash
+   docker compose up --build
+   ```
+
+3. Accede a la aplicación y API:
+   - Frontend: [http://localhost:80](http://localhost:80)
+   - API: [http://localhost:3000/superheroes](http://localhost:3000/superheroes)
+
+### Detalles de Configuración
+
+- El frontend se sirve usando Nginx en el puerto `80`.
+- La API mock se sirve usando JSON-Server en el puerto `3000`.
+- El archivo `db.json` se utiliza como fuente de datos para la API.
+
+### Variables de Entorno
+
+No se requieren variables de entorno adicionales para esta configuración.
+
+### Notas
+
+- Asegúrate de que los puertos `80` y `3000` estén disponibles en tu máquina host.
+- El `Dockerfile` y `docker-compose.yml` están configurados para un despliegue listo para producción.
+
+Para más ayuda, consulta la [documentación de Docker](https://docs.docker.com/).
+

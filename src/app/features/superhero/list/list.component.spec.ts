@@ -5,12 +5,12 @@ import { ToolbarComponent } from '../../../components/toolbar/toolbar.component'
 import { SuperheroService } from '../../../services/superhero.service';
 import { ModalService } from '../../../services/modal.service';
 import { ModalComponent } from '../../../components/modal/modal.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of } from 'rxjs';
 import { Superhero } from '../../../models/superhero.model';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { EventEmitter, Output, Component } from '@angular/core';
+import { EventEmitter, Component } from '@angular/core';
 import { By } from '@angular/platform-browser';
+import { provideHttpClient } from '@angular/common/http';
 
 const mockSuperheroService = {
   getAllSuperhero: jasmine.createSpy('getAllSuperhero').and.returnValue(of([
@@ -74,12 +74,12 @@ describe('ListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         ListComponent,
-        HttpClientTestingModule,
         NoopAnimationsModule,
       ],
       providers: [
         { provide: SuperheroService, useValue: superheroServiceSpy },
         { provide: ModalService, useValue: modalServiceSpy },
+        provideHttpClient(),
       ],
     })
       .overrideComponent(ListComponent, {

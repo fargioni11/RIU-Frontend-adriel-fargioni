@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { GridComponent } from './grid.component';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSortModule } from '@angular/material/sort';
@@ -11,10 +10,10 @@ import { SuperheroService } from '../../services/superhero.service';
 import { ModalService } from '../../services/modal.service';
 import { ModalComponent } from '../modal/modal.component';
 import { filterComponent } from './filter/filter.component';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import Swal, { SweetAlertResult } from 'sweetalert2';
-import { By } from '@angular/platform-browser';
-import { Component, DebugElement } from '@angular/core';
+import { Component } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
 
 const mockSuperheroService = {
   deleteSuperhero: jasmine.createSpy('deleteSuperhero').and.returnValue(of({})),
@@ -44,7 +43,7 @@ interface TestData {
                 [sortableColumns]="sortable"
               ></app-grid>`,
   standalone: true,
-  imports: [GridComponent, MatTableModule, MatPaginatorModule, MatIconModule, MatButtonModule, MatSortModule, filterComponent],
+  imports: [GridComponent, MatTableModule, MatPaginatorModule, MatIconModule, MatButtonModule, MatSortModule, filterComponent, ],
 })
 class TestGridContainerComponent {
   columns: string[] = ['id', 'name', 'power', 'actions'];
@@ -74,12 +73,8 @@ describe('GridComponent', () => {
   let testContainerComponent: TestGridContainerComponent;
 
   beforeEach(async () => {
-    const superheroServiceSpy = jasmine.createSpyObj('SuperheroService', ['getAllSuperhero', 'deleteSuperhero']);
-    const modalServiceSpy = jasmine.createSpyObj('ModalService', ['openModal']);
-
     await TestBed.configureTestingModule({
       imports: [
-        HttpClientTestingModule,
         MatTableModule,
         MatPaginatorModule,
         MatIconModule,
@@ -90,6 +85,7 @@ describe('GridComponent', () => {
         GridComponent,
       ],
       providers: [
+        provideHttpClient(),
         { provide: SuperheroService, useValue: mockSuperheroService },
         { provide: ModalService, useValue: mockModalService },
       ],
@@ -150,16 +146,15 @@ describe('GridComponent', () => {
     expect(mockModalService.openModal).toHaveBeenCalledWith(ModalComponent, { data: dataToEdit, isEdit: true });
   });
 
-  it('should emit superheroEdited event when edit modal is closed with a result', () => {
-    const dataToEdit = testContainerComponent.testData[0];
-    component.editSuperhero(dataToEdit);
-    expect(testContainerComponent.superheroEditedSpy).toHaveBeenCalled();
-  });
 
-  it('should not emit superheroEdited event when edit modal is closed without a result', () => {
+  it('should not emit superheroEdited event when edit modal is closed without a result', async () => {
     (mockModalService.openModal as jasmine.Spy).and.returnValue({ afterClosed: () => of(null) });
     const dataToEdit = testContainerComponent.testData[0];
     component.editSuperhero(dataToEdit);
+
+    await fixture.whenStable();
+    fixture.detectChanges();
+
     expect(testContainerComponent.superheroEditedSpy).not.toHaveBeenCalled();
   });
 

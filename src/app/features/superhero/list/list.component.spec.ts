@@ -12,22 +12,6 @@ import { EventEmitter, Component } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
 
-const mockSuperheroService = {
-  getAllSuperhero: jasmine.createSpy('getAllSuperhero').and.returnValue(of([
-    { id: 1, name: 'Superman', power: 'Flight', age: '30', actions: '' },
-    { id: 2, name: 'Batman', power: 'Intelligence', age: '40', actions: '' },
-  ])),
-  deleteSuperhero: jasmine.createSpy('deleteSuperhero').and.returnValue(of({})),
-};
-
-const mockModalService = {
-  openModal: jasmine.createSpy('openModal').and.returnValue({
-    afterClosed: () => of(true),
-    componentInstance: {},
-    close: jasmine.createSpy('close'),
-  } as any),
-};
-
 @Component({
   selector: 'app-modal',
   template: '',
